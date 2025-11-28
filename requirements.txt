@@ -1,0 +1,260 @@
+# =====================================================
+# REQUIREMENTS.TXT
+# Main dependencies for Sales Forecasting MLOps Pipeline
+# =====================================================
+# Author: Amey Talkatkar
+# Email: ameytalkatkar169@gmail.com
+# Python Version: 3.12.3
+# Last Updated: November 24, 2024
+# =====================================================
+
+# CRITICAL: All versions are pinned for reproducibility
+# Tested on AWS EC2 t3.small (2GB RAM, 2 vCPU)
+# Do NOT upgrade versions without testing on 2GB RAM constraint
+
+# =====================================================
+# CORE PYTHON TOOLS
+# =====================================================
+pip>=24.0.0           # Package installer
+setuptools>=69.0.0    # Build tool
+wheel>=0.42.0         # Built package format
+
+# =====================================================
+# DATA PROCESSING & ANALYSIS
+# =====================================================
+pandas==2.2.3         # Data manipulation and analysis
+numpy==2.2.0          # Numerical computing
+scipy==1.14.1         # Scientific computing
+
+# Why these versions?
+# - pandas 2.2.3: Stable, memory-efficient, compatible with pyarrow
+# - numpy 2.3.5: Latest stable with performance improvements
+# - scipy 1.14.1: Required by scikit-learn
+
+# =====================================================
+# MACHINE LEARNING
+# =====================================================
+scikit-learn==1.6.1   # ML algorithms and utilities
+xgboost==2.1.3        # Gradient boosting (memory-efficient)
+lightgbm==4.5.0       # Alternative gradient boosting (faster than XGBoost)
+
+# Why NOT TensorFlow/PyTorch?
+# - Too memory-intensive for t3.small (2GB RAM)
+# - Not needed for tabular data forecasting
+# - Use XGBoost/LightGBM for better performance
+
+# Model persistence
+joblib==1.4.2         # Efficient model serialization
+cloudpickle==3.1.0    # Enhanced pickling for complex objects
+
+# =====================================================
+# MLOPS TOOLS
+# =====================================================
+
+# MLflow - Experiment Tracking & Model Registry
+mlflow==3.6.0         # Main MLflow package
+alembic==1.13.2       # Database migrations for MLflow (auto-installed but pinned)
+sqlalchemy==1.4.53    # Database ORM for MLflow
+
+# DVC - Data Version Control
+dvc==3.58.0           # Data versioning
+dvc-http==2.32.0      # HTTP remote support (for DagsHub)
+dulwich==0.22.1       # Git implementation for DVC
+
+# Apache Airflow - Workflow Orchestration
+apache-airflow==3.1.3                      # Main Airflow package
+apache-airflow-providers-postgres==5.13.1  # PostgreSQL provider
+apache-airflow-providers-http==4.13.2      # HTTP provider for API calls
+apache-airflow-providers-fab==1.5.0        # Flask AppBuilder auth
+apache-airflow-providers-common-io==1.6.3  # File sensors and operators
+
+# CRITICAL: Airflow 3.x requires different imports!
+# Old: from airflow.operators.bash_operator import BashOperator
+# New: from airflow.providers.standard.operators.bash import BashOperator
+
+# Airflow Dependencies (auto-installed but pinned for stability)
+Flask==2.2.5          # Web framework for Airflow UI
+Flask-AppBuilder==4.5.2  # Admin interface
+gunicorn==23.0.0      # WSGI server for production
+psycopg2-binary==2.9.10  # PostgreSQL adapter
+Werkzeug==2.2.2       # WSGI utility library (compatible with Flask 2.2.5)
+
+# =====================================================
+# DATA QUALITY & VALIDATION
+# =====================================================
+# great-expectations==1.2.3  # Data validation framework
+pydantic==2.11.1          # Data validation using Python type hints
+
+# Why Great Expectations?
+# - Industry standard for data quality
+# - Generates beautiful reports
+# - Integrates with Airflow
+
+# =====================================================
+# API & WEB SERVICES
+# =====================================================
+
+# FastAPI - Model Serving
+fastapi==0.116.0      # Modern API framework
+uvicorn[standard]==0.37.0  # ASGI server
+python-multipart==0.0.18   # Form data parsing
+pydantic-settings==2.6.1   # Settings management
+
+# API utilities
+httpx==0.28.1         # Async HTTP client
+aiofiles==24.1.0      # Async file operations
+
+# =====================================================
+# DASHBOARD & VISUALIZATION
+# =====================================================
+
+# Streamlit - Interactive Dashboard
+streamlit==1.46.0     # Dashboard framework
+
+# Plotting libraries
+plotly==5.24.1        # Interactive plots
+matplotlib==3.9.2     # Static plots
+seaborn==0.13.2       # Statistical visualization
+
+# Why Plotly over Matplotlib for dashboard?
+# - Interactive by default
+# - Better for web dashboards
+# - Streamlit native support
+
+# =====================================================
+# AWS & CLOUD SERVICES
+# =====================================================
+boto3==1.40.70        # AWS SDK
+botocore==1.40.70     # AWS core functionality
+s3fs==2024.10.0       # S3 filesystem interface
+
+# Why AWS?
+# - EC2 for compute (our t3.small instance)
+# - S3 for artifact storage (optional)
+# - Cost-effective for small projects
+
+# =====================================================
+# UTILITIES & HELPERS
+# =====================================================
+
+# Configuration & Environment
+python-dotenv==1.0.0  # Load .env files
+pyyaml==6.0.2         # YAML parsing
+toml==0.10.2          # TOML parsing
+
+# Date & Time
+python-dateutil==2.9.0  # Date utilities
+pytz==2024.2           # Timezone support
+
+# Logging & Monitoring
+loguru==0.7.3         # Better logging
+colorlog==6.9.0       # Colored logs
+
+# HTTP & Requests
+requests==2.32.3      # HTTP library
+urllib3==2.2.3        # HTTP client
+
+# Data formats
+pyarrow==18.1.0       # Parquet support (fast columnar format)
+openpyxl==3.1.5       # Excel file support
+
+# CLI utilities
+click==8.1.8          # Command-line interface creation
+tqdm==4.67.1          # Progress bars
+
+# System utilities
+psutil==6.1.0         # System monitoring
+
+# =====================================================
+# SECURITY & AUTHENTICATION
+# =====================================================
+cryptography==44.0.0  # Cryptographic recipes
+PyJWT==2.10.1         # JSON Web Tokens
+
+# =====================================================
+# COMPATIBILITY & TYPING
+# =====================================================
+typing-extensions==4.14.1  # Backported typing features
+attrs==24.3.0              # Classes without boilerplate
+
+# =====================================================
+# DEVELOPMENT & DEBUGGING (Minimal - see requirements-dev.txt)
+# =====================================================
+ipython==8.30.0       # Enhanced Python shell (useful for debugging)
+
+# =====================================================
+# NOTES FOR STUDENTS
+# =====================================================
+
+# Memory Considerations for t3.small (2GB RAM):
+# ------------------------------------------------
+# Total memory usage (rough estimates):
+# - OS + System: ~400MB
+# - PostgreSQL: ~200MB
+# - Airflow (3 processes): ~600MB
+# - Python packages: ~300MB
+# - Working memory: ~500MB
+# ------------------------------------------------
+# Total: ~2000MB (fits in 2GB with tight margin)
+
+# To reduce memory if needed:
+# 1. Reduce Airflow parallelism in airflow.cfg
+# 2. Use swap file (already configured in SETUP_GUIDE.md)
+# 3. Process data in chunks instead of loading all at once
+# 4. Use garbage collection explicitly: import gc; gc.collect()
+
+# Version Upgrade Strategy:
+# -------------------------
+# 1. Never upgrade all packages at once
+# 2. Test one package upgrade at a time
+# 3. Always test on t3.small before committing
+# 4. Document any breaking changes
+# 5. Keep this file in sync with requirements-dev.txt
+
+# Installation Tips:
+# ------------------
+# 1. Always use virtual environment:
+#    python3.12 -m venv venv
+#    source venv/bin/activate
+#
+# 2. Upgrade pip first:
+#    pip install --upgrade pip setuptools wheel
+#
+# 3. Install requirements:
+#    pip install -r requirements.txt
+#
+# 4. Verify installation:
+#    pip list
+#    pip check
+#
+# 5. Generate lock file (optional):
+#    pip freeze > requirements.lock
+
+# Troubleshooting Common Installation Issues:
+# -------------------------------------------
+# 1. If psycopg2-binary fails:
+#    sudo apt-get install libpq-dev
+#
+# 2. If numpy/pandas fail:
+#    sudo apt-get install python3-dev gcc
+#
+# 3. If cryptography fails:
+#    sudo apt-get install libssl-dev libffi-dev
+#
+# 4. If lxml fails (if needed):
+#    sudo apt-get install libxml2-dev libxslt1-dev
+#
+# 5. Out of memory during install:
+#    pip install --no-cache-dir -r requirements.txt
+
+# For Production:
+# ---------------
+# Consider using:
+# - pip-tools for dependency resolution
+# - Poetry for dependency management
+# - Docker for containerization
+# - Multi-stage builds to reduce image size
+
+# =====================================================
+# END OF REQUIREMENTS.TXT
+# =====================================================
