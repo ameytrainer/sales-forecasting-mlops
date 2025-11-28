@@ -1,0 +1,92 @@
+# MLOps Dashboard Service - Streamlit Application
+#
+# This systemd service runs the Streamlit dashboard for monitoring
+# and visualization of MLOps metrics.
+#
+# Installation:
+#   sudo cp mlops-dashboard.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable mlops-dashboard.service
+#   sudo systemctl start mlops-dashboard.service
+#
+# Management:
+#   sudo systemctl status mlops-dashboard
+#   sudo systemctl restart mlops-dashboard
+#   sudo systemctl stop mlops-dashboard
+#   sudo journalctl -u mlops-dashboard -f
+#
+# Author: Amey Talkatkar
+# Email: ameytalkatkar169@gmail.com
+
+[Unit]
+Description=MLOps Streamlit Dashboard
+Documentation=https://github.com/ameytrainer/sales-forecasting-mlops
+After=network.target mlops-api.service postgresql.service
+Wants=mlops-api.service postgresql.service
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/sales-forecasting-mlops
+
+# Environment variables
+Environment="PATH=/home/ubuntu/.local/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="PYTHONPATH=/home/ubuntu/sales-forecasting-mlops"
+Environment="ENVIRONMENT=production"
+
+# Load additional environment variables from file
+EnvironmentFile=-/home/ubuntu/sales-forecasting-mlops/.env
+
+# Streamlit Configuration
+Environment="STREAMLIT_SERVER_PORT=8501"
+Environment="STREAMLIT_SERVER_ADDRESS=0.0.0.0"
+Environment="STREAMLIT_SERVER_HEADLESS=true"
+Environment="STREAMLIT_BROWSER_GATHER_USAGE_STATS=false"
+
+# Database Configuration
+Environment="DATABASE_URL=postgresql://airflow:airflow123@localhost:5432/airflow"
+
+# API Configuration
+Environment="API_HOST=localhost"
+Environment="API_PORT=8000"
+
+# MLflow Configuration
+Environment="MLFLOW_TRACKING_URI=https://dagshub.com/username/sales-forecasting-mlops.mlflow"
+
+# Start command
+ExecStart=/usr/bin/python3 -m streamlit run dashboard/app.py \
+    --server.port ${STREAMLIT_SERVER_PORT} \
+    --server.address ${STREAMLIT_SERVER_ADDRESS} \
+    --server.headless true \
+    --browser.gatherUsageStats false \
+    --server.enableCORS false \
+    --server.enableXsrfProtection true
+
+# Restart policy
+Restart=always
+RestartSec=10
+KillMode=mixed
+KillSignal=SIGTERM
+TimeoutStopSec=30
+
+# Resource limits
+LimitNOFILE=65536
+MemoryLimit=1G
+CPUQuota=100%
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/ubuntu/sales-forecasting-mlops/logs
+ReadWritePaths=/tmp/.streamlit
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=mlops-dashboard
+
+[Install]
+WantedBy=multi-user.target

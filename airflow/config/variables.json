@@ -1,0 +1,45 @@
+{
+  "project_name": "sales-forecasting-mlops",
+  "project_root": "/home/ubuntu/sales-forecasting-mlops",
+  "environment": "production",
+  
+  "baseline_rmse": 100.0,
+  "baseline_mae": 80.0,
+  "baseline_r2": 0.85,
+  
+  "drift_threshold": 0.05,
+  "performance_degradation_threshold": 0.1,
+  "monitoring_window_days": 7,
+  
+  "retraining_needed": "false",
+  "retraining_priority": "LOW",
+  "retraining_reasons": "",
+  "last_training_timestamp": "",
+  
+  "model_name": "sales_forecasting_production",
+  "current_model_version": 1,
+  "current_model_stage": "Production",
+  
+  "notification_channels": {
+    "email": true,
+    "slack": false
+  },
+  
+  "training_config": {
+    "models": ["lr", "rf", "xgb"],
+    "test_size": 0.2,
+    "random_state": 42,
+    "cv_folds": 5
+  },
+  
+  "feature_engineering": {
+    "lag_features": [1, 7, 30],
+    "rolling_windows": [7, 30]
+  },
+  
+  "deployment_config": {
+    "auto_deploy_threshold": 0.05,
+    "validation_required": true,
+    "staging_duration_hours": 24
+  }
+}

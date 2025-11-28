@@ -1,0 +1,89 @@
+# MLOps API Service - FastAPI Application
+#
+# This systemd service runs the FastAPI application for model serving
+# and management operations.
+#
+# Installation:
+#   sudo cp mlops-api.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable mlops-api.service
+#   sudo systemctl start mlops-api.service
+#
+# Management:
+#   sudo systemctl status mlops-api
+#   sudo systemctl restart mlops-api
+#   sudo systemctl stop mlops-api
+#   sudo journalctl -u mlops-api -f
+#
+# Author: Amey Talkatkar
+# Email: ameytalkatkar169@gmail.com
+
+[Unit]
+Description=MLOps FastAPI Application
+Documentation=https://github.com/ameytrainer/sales-forecasting-mlops
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/sales-forecasting-mlops
+
+# Environment variables
+Environment="PATH=/home/ubuntu/.local/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="PYTHONPATH=/home/ubuntu/sales-forecasting-mlops"
+Environment="ENVIRONMENT=production"
+
+# Load additional environment variables from file
+EnvironmentFile=-/home/ubuntu/sales-forecasting-mlops/.env
+
+# API Configuration
+Environment="API_HOST=0.0.0.0"
+Environment="API_PORT=8000"
+Environment="API_WORKERS=4"
+Environment="API_RELOAD=false"
+
+# Database Configuration
+Environment="DATABASE_URL=postgresql://airflow:airflow123@localhost:5432/airflow"
+
+# MLflow Configuration
+Environment="MLFLOW_TRACKING_URI=https://dagshub.com/username/sales-forecasting-mlops.mlflow"
+
+# Start command
+ExecStart=/usr/bin/python3 -m uvicorn api.main:app \
+    --host ${API_HOST} \
+    --port ${API_PORT} \
+    --workers ${API_WORKERS} \
+    --log-level info \
+    --access-log \
+    --proxy-headers \
+    --forwarded-allow-ips='*'
+
+# Restart policy
+Restart=always
+RestartSec=10
+KillMode=mixed
+KillSignal=SIGTERM
+TimeoutStopSec=30
+
+# Resource limits
+LimitNOFILE=65536
+MemoryLimit=2G
+CPUQuota=200%
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/ubuntu/sales-forecasting-mlops/logs
+ReadWritePaths=/home/ubuntu/sales-forecasting-mlops/data
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=mlops-api
+
+[Install]
+WantedBy=multi-user.target

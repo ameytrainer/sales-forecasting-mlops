@@ -1,0 +1,30 @@
+# Dashboard Requirements
+# Streamlit Application Dependencies
+
+# Core Dashboard Framework
+streamlit==1.40.2
+
+# Data Visualization
+plotly==5.24.1
+matplotlib==3.9.3
+seaborn==0.13.2
+
+# Data Processing
+pandas==2.2.3
+numpy==2.3.5
+
+# Database
+sqlalchemy==2.0.36
+psycopg2-binary==2.9.10
+
+# MLflow Integration
+mlflow==3.6.0
+
+# HTTP Requests
+requests==2.32.3
+
+# Utilities
+python-dotenv==1.0.1
+
+# Date/Time
+python-dateutil==2.9.0

@@ -1,0 +1,102 @@
+# Airflow Configuration Template
+# Copy this file to $AIRFLOW_HOME/airflow.cfg and customize
+
+[core]
+# The folder where your airflow pipelines live
+dags_folder = /home/ubuntu/airflow/dags
+
+# The folder where airflow should store its log files
+base_log_folder = /home/ubuntu/airflow/logs
+
+# Airflow executor to use
+executor = LocalExecutor
+
+# SQL Alchemy connection string
+sql_alchemy_conn = postgresql+psycopg2://airflow:airflow123@localhost:5432/airflow
+
+# Parallelism settings (optimized for 2GB RAM)
+parallelism = 4
+dag_concurrency = 4
+max_active_runs_per_dag = 1
+max_active_tasks_per_dag = 4
+
+# Default timezone
+default_timezone = UTC
+
+# Load examples (disable in production)
+load_examples = False
+
+# Enable pickle support (for XCom)
+enable_xcom_pickling = True
+
+# Plugins folder
+plugins_folder = /home/ubuntu/airflow/plugins
+
+[scheduler]
+# How often to scan DAGs folder
+dag_dir_list_interval = 60
+
+# Parse DAGs every N seconds
+min_file_process_interval = 30
+
+# Number of scheduler processes
+parsing_processes = 2
+
+# Use DAG Processor (new in Airflow 3.x)
+standalone_dag_processor = True
+
+[webserver]
+# Web server host and port
+web_server_host = 0.0.0.0
+web_server_port = 8080
+
+# Secret key for session encryption
+secret_key = REPLACE_WITH_YOUR_SECRET_KEY
+
+# Workers for Gunicorn
+workers = 2
+worker_class = sync
+
+# Base URL (if behind reverse proxy)
+base_url = http://localhost:8080
+
+# Enable RBAC
+rbac = True
+
+[api]
+# Enable API authentication
+auth_backends = airflow.api.auth.backend.basic_auth
+
+[logging]
+# Logging level
+logging_level = INFO
+
+# Log format
+log_format = [%%(asctime)s] {{%%(filename)s:%%(lineno)d}} %%(levelname)s - %%(message)s
+simple_log_format = %%(asctime)s %%(levelname)s - %%(message)s
+
+# Colored logs
+colored_console_log = True
+colored_log_format = [%%(blue)s%%(asctime)s%%(reset)s] {{%%(blue)s%%(filename)s:%%(reset)s%%(lineno)d}} %%(log_color)s%%(levelname)s%%(reset)s - %%(log_color)s%%(message)s%%(reset)s
+colored_formatter_class = airflow.utils.log.colored_log.CustomTTYColoredFormatter
+
+[smtp]
+# SMTP email notifications (configure for production)
+smtp_host = localhost
+smtp_starttls = False
+smtp_ssl = False
+smtp_port = 25
+smtp_mail_from = airflow@example.com
+
+[operators]
+# Default operator settings
+default_owner = amey
+default_cpus = 1
+default_ram = 512
+default_disk = 512
+default_queue = default
+
+[secrets]
+# Backend for secrets (use AWS Secrets Manager in production)
+backend = 
+backend_kwargs = 

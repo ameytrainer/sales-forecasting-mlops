@@ -1,0 +1,44 @@
+# API Requirements
+# FastAPI Application Dependencies
+
+# Core API Framework
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+pydantic==2.10.3
+pydantic-settings==2.6.1
+
+# HTTP Client
+requests==2.32.3
+httpx==0.28.1
+
+# Database
+sqlalchemy==2.0.36
+psycopg2-binary==2.9.10
+alembic==1.14.0
+
+# MLflow Integration
+mlflow==3.6.0
+
+# Data Processing
+pandas==2.2.3
+numpy==2.3.5
+
+# Logging & Monitoring
+python-json-logger==3.2.1
+
+# Security
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.20
+
+# CORS
+python-cors==1.0.0
+
+# Email (optional)
+aiosmtplib==3.0.2
+
+# Testing
+pytest==8.3.4
+pytest-asyncio==0.24.0
+pytest-cov==6.0.0
+httpx==0.28.1  # For testing async endpoints

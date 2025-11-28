@@ -1,0 +1,100 @@
+# MLflow Tracking Server Service
+#
+# This systemd service runs the MLflow tracking server for experiment
+# tracking and model registry.
+#
+# Installation:
+#   sudo cp mlflow-server.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable mlflow-server.service
+#   sudo systemctl start mlflow-server.service
+#
+# Management:
+#   sudo systemctl status mlflow-server
+#   sudo systemctl restart mlflow-server
+#   sudo systemctl stop mlflow-server
+#   sudo journalctl -u mlflow-server -f
+#
+# Author: Amey Talkatkar
+# Email: ameytalkatkar169@gmail.com
+
+[Unit]
+Description=MLflow Tracking Server
+Documentation=https://mlflow.org/docs/latest/tracking.html
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/sales-forecasting-mlops
+
+# Environment variables
+Environment="PATH=/home/ubuntu/.local/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="PYTHONPATH=/home/ubuntu/sales-forecasting-mlops"
+
+# Load additional environment variables from file
+EnvironmentFile=-/home/ubuntu/sales-forecasting-mlops/.env
+
+# MLflow Configuration
+Environment="MLFLOW_HOST=0.0.0.0"
+Environment="MLFLOW_PORT=5000"
+Environment="MLFLOW_WORKERS=2"
+
+# Backend Store (PostgreSQL)
+Environment="MLFLOW_BACKEND_STORE_URI=postgresql://airflow:airflow123@localhost:5432/mlflow"
+
+# Artifact Store (Local filesystem or S3)
+Environment="MLFLOW_ARTIFACT_ROOT=/home/ubuntu/sales-forecasting-mlops/mlruns"
+
+# Optional: Use S3 for artifacts (uncomment and configure)
+# Environment="MLFLOW_ARTIFACT_ROOT=s3://my-mlflow-bucket/mlruns"
+# Environment="AWS_ACCESS_KEY_ID=your_access_key"
+# Environment="AWS_SECRET_ACCESS_KEY=your_secret_key"
+# Environment="AWS_DEFAULT_REGION=us-east-1"
+
+# Start command
+ExecStart=/usr/bin/python3 -m mlflow server \
+    --host ${MLFLOW_HOST} \
+    --port ${MLFLOW_PORT} \
+    --backend-store-uri ${MLFLOW_BACKEND_STORE_URI} \
+    --default-artifact-root ${MLFLOW_ARTIFACT_ROOT} \
+    --workers ${MLFLOW_WORKERS} \
+    --gunicorn-opts "--timeout 120 --keep-alive 5"
+
+# Pre-start: Create MLflow database if doesn't exist
+ExecStartPre=/bin/bash -c '\
+    PGPASSWORD=airflow123 psql -h localhost -U airflow -tc \
+    "SELECT 1 FROM pg_database WHERE datname = \'mlflow\'" | \
+    grep -q 1 || \
+    PGPASSWORD=airflow123 psql -h localhost -U airflow -c \
+    "CREATE DATABASE mlflow"'
+
+# Restart policy
+Restart=always
+RestartSec=10
+KillMode=mixed
+KillSignal=SIGTERM
+TimeoutStopSec=30
+
+# Resource limits
+LimitNOFILE=65536
+MemoryLimit=2G
+CPUQuota=100%
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/ubuntu/sales-forecasting-mlops/mlruns
+ReadWritePaths=/home/ubuntu/sales-forecasting-mlops/logs
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=mlflow-server
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,62 @@
+# Airflow Connections Configuration
+# Import these connections using: airflow connections import connections.yaml
+
+# PostgreSQL Connection
+postgres_default:
+  conn_type: postgres
+  description: Default PostgreSQL connection
+  host: localhost
+  login: airflow
+  password: airflow123
+  port: 5432
+  schema: airflow
+
+# MLflow Connection (DagsHub)
+mlflow_tracking:
+  conn_type: http
+  description: MLflow tracking server on DagsHub
+  host: https://dagshub.com
+  login: YOUR_DAGSHUB_USERNAME
+  password: YOUR_DAGSHUB_TOKEN
+  extra:
+    endpoint: /your-username/sales-forecasting-mlops.mlflow
+
+# DVC Remote Connection
+dvc_remote:
+  conn_type: http
+  description: DVC remote storage on DagsHub
+  host: https://dagshub.com
+  login: YOUR_DAGSHUB_USERNAME
+  password: YOUR_DAGSHUB_TOKEN
+  extra:
+    repo: your-username/sales-forecasting-mlops
+
+# AWS S3 Connection (if using S3 for storage)
+aws_s3:
+  conn_type: aws
+  description: AWS S3 for model artifacts
+  login: YOUR_AWS_ACCESS_KEY_ID
+  password: YOUR_AWS_SECRET_ACCESS_KEY
+  extra:
+    region_name: us-east-1
+
+# Slack Connection (for notifications)
+slack_default:
+  conn_type: slack
+  description: Slack webhook for notifications
+  password: YOUR_SLACK_WEBHOOK_URL
+  extra:
+    webhook_token: YOUR_WEBHOOK_TOKEN
+    channel: "#mlops-alerts"
+
+# Email Connection (SMTP)
+email_default:
+  conn_type: email
+  description: SMTP email for notifications
+  host: smtp.gmail.com
+  login: your-email@gmail.com
+  password: YOUR_APP_PASSWORD
+  port: 587
+  extra:
+    from_email: your-email@gmail.com
+    timeout: 30
