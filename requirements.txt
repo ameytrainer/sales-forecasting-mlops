@@ -63,10 +63,10 @@ dulwich==0.22.1       # Git implementation for DVC
 
 # Apache Airflow - Workflow Orchestration
 apache-airflow==3.1.3                      # Main Airflow package
-apache-airflow-providers-postgres==5.13.1  # PostgreSQL provider
-apache-airflow-providers-http==4.13.2      # HTTP provider for API calls
-apache-airflow-providers-fab==1.5.0        # Flask AppBuilder auth
-apache-airflow-providers-common-io==1.6.3  # File sensors and operators
+apache-airflow-providers-postgres # ==5.13.1  # PostgreSQL provider
+apache-airflow-providers-http # ==4.13.2      # HTTP provider for API calls
+apache-airflow-providers-fab # ==1.5.0        # Flask AppBuilder auth
+apache-airflow-providers-common-io # ==1.6.3  # File sensors and operators
 
 # CRITICAL: Airflow 3.x requires different imports!
 # Old: from airflow.operators.bash_operator import BashOperator
