@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.so
+
+# Virtual Environment
+venv/
+env/
+
+# DVC - Only cache, temp, credentials
+.dvc/cache/
+.dvc/tmp/
+.dvc/config.local
+
+# Airflow
+airflow/logs/
+airflow/standalone_admin_password.txt
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+
+# Secrets
+.env
+*.pem
+
+# Models (DVC tracked)
+*.pkl
+*.h5
+*.pt
+
+# Logs
+*.log
+
+# Jupyter
+.ipynb_checkpoints/
